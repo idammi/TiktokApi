@@ -33,11 +33,11 @@ public class TokenRequest {
 	}
 	
 	public static byte[] buildTokenReqBody(){
-		Map<Integer, Object> pbmap = new TreeMap<>();
+		TreeMap<Integer, Object> pbmap = new TreeMap<>();
 		pbmap.put(1, 1077938244); //请求序列号 
 		pbmap.put(2, 2);
 		pbmap.put(3, 2);
-		pbmap.put(4, ProtoBuffers.toBuf(new TokenReqBean()));//填充这个TokenReqBean对象就行
+		pbmap.put(4, ProtoBuffers.toBuf(new TokenReqBean()).readByteString());//填充这个TokenReqBean对象就行
 		pbmap.put(5, System.currentTimeMillis() << 1);
 		return ProtoBuffers.toBuf(pbmap).readByteArray();
 	}
