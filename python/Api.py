@@ -133,15 +133,21 @@ class XArgus:
             13:XArgus.get_bodyhash(None),         #bodyHash
             14:XArgus.get_queryhash(None),         #queryHash
             15: {
-                1: 0,       #signCount
-                2: 0,       #reportCount
-                3: 0,       #settingCount
+                1: 172,       #signCount
+                2: 1388734,       #reportCount
+                3: 1388734,       #settingCount
             },
             16:'AnPPIveUCQlIiFroHGG17nXK6', #secDeviceToken
             17:timestamp,   #isAppLicense
             20:'none',      #pskVersion
             21:738,         #callType
         }
+
+    @staticmethod
+    def build(xargus_simple_bean:dict) -> str:
+        return Api.send('XArgus_build', [
+            json.dumps(xargus_simple_bean).encode('utf-8').hex()
+        ])
 
     @staticmethod
     def encrypt(xargus_bean:dict) -> str:
@@ -218,6 +224,23 @@ def testXArgus() :
     ss3 = XArgus.decrypt(ss2)
     print(ss3)
     print(ss3 == ss1)
+
+
+def testXArgusBuild():
+    xargus_simple_bean = {
+        'deviceID': "",  #可为空
+        'licenseID': "",
+        'appVersion': "",
+        'sdkVersionStr': "",
+        'sdkVersion': 0,
+        'x_khronos': 0,
+        'x_ss_stub': "", #可为空
+        'secDeviceToken': "", #可为空
+        'queryHex': "",
+    }
+
+    ss = XArgus.build(xargus_simple_bean)
+    print(ss)
 
 
 def testXCylons() :
@@ -349,6 +372,22 @@ def query_user_profile(user_id:str, sec_user_id:str):
     print(resp.status_code, resp.content)
 
 if __name__ == '__main__':
-    query_user_profile(None, None)
+    # query_user_profile(None, None)
+    
+    query = 'residence=SG&device_id=&os_version=13.3&multi_login=1&app_id=1233&app_name=musical_ly&vendor_id=03405D1E-A439-4010-955F-771ADA050D51&locale=en&ac=WIFI&sys_region=US&ssmix=a&version_code=25.1.1&vid=03405D1E-A439-4010-955F-771ADA050D51&channel=App%20Store&op_region=SG&os_api=18&idfa=2A58B330-DDE2-4FEB-9FAE-424A64F2D1F5&idfv=2A58B330-DDE2-4FEB-9FAE-424A64F2D1F5&device_platform=iphone&device_type=iPhone8,1&openudid=1d838bed9ea49e3492ed52fff0d0ede400bf31a7&tz_name=US/Eastern&tz_offset=-14400&app_language=en&current_region=SG&build_number=251102&aid=1233&mcc_mnc=&screen_width=750&language=en&cdid=78F6FCFB-5ED9-4E0C-9CE8-1736AFD71C99&app_version=25.1.1&resolution=750*1334&cronet_version=6586a3ac_2022-05-30&ttnet_version=4.1.94.7-tiktok'
 
+    xargus_simple_bean = {
+        'deviceID': "7111580899770353153",  #可为空
+        'licenseID': "466012054",
+        'appVersion': "25.1.1",
+        'sdkVersionStr': "v04.03.09-ov-iOS",
+        'sdkVersion': 0x04030921,
+        'x_khronos': 1658136692,
+        'x_ss_stub': "E1DD9F35B12090B8A6F1DAF0E54E4ACA", #get请求可为空
+        'secDeviceToken': "AnPPIveUCQlIiFroHGG17nXK6", #可为空
+        'queryHex': query.encode('utf-8').hex(),
+    }
+
+    ss = XArgus.build(xargus_simple_bean)
+    print(ss)
 

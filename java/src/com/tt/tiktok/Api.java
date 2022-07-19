@@ -1,6 +1,7 @@
 package com.tt.tiktok;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import com.alibaba.fastjson.JSON;
 import com.tt.http.Https;
@@ -12,13 +13,14 @@ import com.tt.util.ProtoBuffers;
 import com.tt.util.Utils;
 
 import okio.Buffer;
+import test.dh.model.XArgusSimpleBean;
 
 public class Api {
 	public static String url = "http://47.98.221.30:666/aweme_service/result";
 	/**
 	 * 联系qq获取token: 76752951
 	 */
-	public static String token = "02a5df908cb98f34760b44227d906288";
+	public static String token = "fec73e09968fca21d53525bcf3f09c94";
 	/**
 	 * appId 根据TikTok的美版或欧版来区分 
 	 */
@@ -96,14 +98,14 @@ public class Api {
 		public static String build(String url_query_md5_hex, String x_ss_stub, int sdkver, int x_khronos) {
 			final String defaultStr = "00000000";
 			if(Utils.isBlank(url_query_md5_hex)){
-				url_query_md5_hex = HexUtil.toString(MDUtil.md5("".getBytes()));
+				url_query_md5_hex = HexUtil.toString(MDUtil.md5("".getBytes())).substring(0, 8);
 			}
 			if(Utils.isBlank(x_ss_stub)){
 				x_ss_stub = defaultStr;
 			}
 			String sdkver_hex = HexUtil.toString(Bytes.toBytes(new int[]{sdkver}, false));
 			String time_hex = HexUtil.toString(Bytes.toBytes(new int[]{x_khronos}, true));
-			return String.format("%s%s%s%s%s", url_query_md5_hex, x_ss_stub, defaultStr, sdkver_hex, time_hex);
+			return encrypt(String.format("%s%s%s%s%s", url_query_md5_hex, x_ss_stub, defaultStr, sdkver_hex, time_hex));
 		}
 		
 		/**
@@ -178,6 +180,18 @@ public class Api {
 	}
 	
 	public static class XArgus {
+		public static String build(XArgusSimpleBean argus) {
+			String string = JSON.toJSONString(argus);
+			
+			TikTokReq req = new TikTokReq();
+			req.function = "XArgus_build";
+			req.params = new String[] {
+				HexUtil.toString(string.getBytes(StandardCharsets.UTF_8)),
+			};
+			TikTokResp resp = send(req);
+			return resp.data;
+		}
+		
 		/**
 		 * X-Argus字符串的加密方法, 参数为protobuf的hex字符串
 		 * 
@@ -195,6 +209,8 @@ public class Api {
 			TikTokResp resp = send(req);
 			return resp.data;
 		}
+		
+		
 		
 		/**
 		 * 解密X-Argus字符串

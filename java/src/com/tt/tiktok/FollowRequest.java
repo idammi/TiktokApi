@@ -106,7 +106,7 @@ public class FollowRequest {
 		xArgus.actionRecord.signCount = 492;
 		xArgus.secDeviceToken = "AJ3T-R05Bj1-8RF4XsdAX6HOk";
 		xArgus.isAppLicense = x_khronos << 1;
-		xArgus.pskVersion = "0";
+		xArgus.pskVersion = "none";
 		xArgus.callType = 738; //固定值
 		
 		String xArgusStr = XArgus.encrypt(xArgus);
