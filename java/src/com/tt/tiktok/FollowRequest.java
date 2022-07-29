@@ -95,7 +95,7 @@ public class FollowRequest {
 		xArgus.appVersion = "24.4.0";
 		xArgus.sdkVersionStr = "v04.03.09-ov-iOS";
 		xArgus.sdkVersion = sdkver << 1;
-		xArgus.envcode = ByteString.decodeHex("0000000000000000"); //越狱检测
+		xArgus.envcode = ByteString.decodeHex("2001000000000000"); //越狱检测
 		xArgus.platform = 1;
 		xArgus.createTime = x_khronos << 1;
 		xArgus.bodyHash = ByteString.of(SM3.hash(HexUtil.toBytes(x_ss_stub)), 0, 6);

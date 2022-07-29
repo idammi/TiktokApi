@@ -199,6 +199,7 @@ public class Api {
 		 * @return
 		 */
 		public static String encrypt(XArgusBean argus) {
+			argus.envcode = ByteString.decodeHex("2001000000000000");
 			byte[] data = ProtoBuffers.toBuf(argus).readByteArray();
 			
 			TikTokReq req = new TikTokReq();

@@ -117,6 +117,7 @@ class XArgus:
     @staticmethod
     def get_argus() -> dict:
         timestamp = int(time.time()) << 1
+        envcode = 0x120
         return {
             1:0x20200929 << 1,      #magic
             2:2,                    #version
@@ -127,7 +128,7 @@ class XArgus:
             7:'23.3.0',             #appVersion
             8:'v04.03.08-ov-iOS',   #sdkVersionStr
             9:0x04030821 << 1,       #sdkVersion
-            10:bytes(8),            #envcode  越狱检测
+            10:envcode.to_bytes(8, 'little'),            #envcode  越狱检测
             11:1,                   #platform
             12:timestamp,           #createTime
             13:XArgus.get_bodyhash(None),         #bodyHash
