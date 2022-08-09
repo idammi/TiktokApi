@@ -39,6 +39,10 @@ public class XArgusBean {
 	public String secDeviceToken;
 	@WireField(tag=17, adapter="com.squareup.wire.ProtoAdapter#INT64")
 	public long isAppLicense;
+	@WireField(tag=18, adapter="com.squareup.wire.ProtoAdapter#BYTES")
+	public ByteString pskHash;
+	@WireField(tag=19, adapter="com.squareup.wire.ProtoAdapter#BYTES")
+	public ByteString pskCalHash;
 	@WireField(tag=20, adapter="com.squareup.wire.ProtoAdapter#STRING")
 	public String pskVersion;
 	@WireField(tag=21, adapter="com.squareup.wire.ProtoAdapter#INT32")

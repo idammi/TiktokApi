@@ -6,13 +6,12 @@ import random
 import requests
 import json
 from Protobuf import ProtoBuf
-from Sm3 import sm3_hash
 from urllib.parse import quote, urlencode
 
 class Api: 
     URL = "http://47.98.221.30:666/aweme_service/result"
     TOKEN = "b2fa2a3688b33c7324217f7c4380aa8e" 
-    TIKTOK_APPID = 1233  #appId 根据TikTok的美版或欧版来区分 或者为1180 1233
+    TIKTOK_APPID = 1233  #appId 根据TikTok的美版或欧版或国内版抖音来区分 或者为1180 1233 1128
 
     @staticmethod
     def send(funcname:str, params:list[str]) -> str:
@@ -103,57 +102,9 @@ class XCylons:
 
 class XArgus:
     @staticmethod
-    def get_bodyhash(x_ss_stub=None):
-        if(x_ss_stub == None or len(x_ss_stub) == 0):
-            return sm3_hash(bytes(16))[0:6]
-        return sm3_hash(bytes.fromhex(x_ss_stub))[0:6]
-    
-    @staticmethod
-    def get_queryhash(query:str):
-        if(query == None or len(query) == 0):
-            return sm3_hash(bytes(16))[0:6]
-        return sm3_hash(query.encode('utf-8'))[0:6]
-
-    @staticmethod
-    def get_argus() -> dict:
-        timestamp = int(time.time()) << 1
-        envcode = 0x120
-        return {
-            1:0x20200929 << 1,      #magic
-            2:2,                    #version
-            3:random.randint(0, 0x7FFFFFFF),   #rand
-            4:str(Api.TIKTOK_APPID),               #msAppID
-            5:'7068481272823793198', #deviceID
-            6:'1225625952',         #licenseID
-            7:'23.3.0',             #appVersion
-            8:'v04.03.08-ov-iOS',   #sdkVersionStr
-            9:0x04030821 << 1,       #sdkVersion
-            10:envcode.to_bytes(8, 'little'),            #envcode  越狱检测
-            11:1,                   #platform
-            12:timestamp,           #createTime
-            13:XArgus.get_bodyhash(None),         #bodyHash
-            14:XArgus.get_queryhash(None),         #queryHash
-            15: {
-                1: 172,       #signCount
-                2: 1388734,       #reportCount
-                3: 1388734,       #settingCount
-            },
-            16:'AnPPIveUCQlIiFroHGG17nXK6', #secDeviceToken
-            17:timestamp,   #isAppLicense
-            20:'none',      #pskVersion
-            21:738,         #callType
-        }
-
-    @staticmethod
     def build(xargus_simple_bean:dict) -> str:
         return Api.send('XArgus_build', [
             json.dumps(xargus_simple_bean).encode('utf-8').hex()
-        ])
-
-    @staticmethod
-    def encrypt(xargus_bean:dict) -> str:
-        return Api.send('XArgus_encrypt', [
-            ProtoBuf(xargus_bean).toBuf().hex()
         ])
 
     @staticmethod
@@ -229,7 +180,7 @@ def testXArgus() :
 
 def testXArgusBuild():
     xargus_simple_bean = {
-        'deviceID': "",  #可为空
+        'deviceID': "",
         'licenseID': "",
         'appVersion': "",
         'sdkVersionStr': "",
@@ -279,7 +230,6 @@ def testTokenRequestDecrypt():
     dedata = TokenReqCryptor.decrypt(endata.hex())
     ProtoBuf(dedata).dump()
 
-    
 def testTokenResponseDecrypt():
     #读取/sdi/get_token返回内容
     filedata = read_file('~/Desktop/get_token.resp')
@@ -287,84 +237,112 @@ def testTokenResponseDecrypt():
     dedata = TokenReqCryptor.decrypt(endata.hex())
     ProtoBuf(dedata).dump()
 
-
-def query_user_profile(user_id:str, sec_user_id:str):
+def aweme_v1_commit_follow_user(user_id:str, sec_user_id:str, item_id:str):
     lc_id = '466012054'
-    device_id = '7111580899770353153'
-    sdk_ver = 0x04030821
+    device_id = '7128672643347531265'
+    app_version = '25.3.0'
+    aid = '1233'
+    sdk_ver = 0x04030921
+    sdk_ver_str = 'v04.03.09-ov-iOS'
 
-    path = 'https://api16-core-useast5.us.tiktokv.com/aweme/v1/user/profile/other/'
+    path = 'https://api22-normal-c-alisg.tiktokv.com/aweme/v1/commit/follow/user/'
     query = {
-        'residence':'VN',
-        'device_id':device_id,
-        'os_version':'14.2',
-        'iid':'7111582539991844610',
-        'app_name':'musical_ly',
-        'locale':'zh-Hant-TW',
-        'ac':'WIFI',
-        'sys_region':'VN',
-        'js_sdk_version':'',
-        'version_code':'23.3.0',
-        'channel':'App Store',
-        'op_region':'US',
-        'tma_jssdk_version':'',
-        'os_api':'18',
-        'idfa':'991B3FE3-4122-D51B-ABA6-6732AFDB7E27',
-        'idfv':'991B3FE3-4122-D51B-ABA6-6732AFDB7E27',
-        'device_platform':'iphone',
-        'device_type':'iPhone9,1',
-        'openudid':'18be2553a01e63fa5f92f4310e8bf261309edf77',
-        'account_region':'us',
-        'tz_name':'US/Pacific',
-        'tz_offset':'-25200',
-        'app_language':'zh-Hant',
-        'current_region':'VN',
-        'build_number':'233017',
-        'aid':'1233',
-        'mcc_mnc':'',
-        'screen_width':'750',
-        'uoo':'1',
-        'content_language':'',
-        'language':'zh-Hant',
-        'cdid':'F3BCE558-FFAB-4819-9087-48EA98D17CC7',
-        'app_version':'23.3.0',
-        'user_id':'7111000370362532910',
-        'address_book_access':'2',
-        'sec_user_id':'MS4wLjABAAAA8aP_LGWvN1gB7o932qiS0d4KWlJfdRSZPOcBqwRbezRLth-QL4ABKujvZ3mkKJ7Q',
-        'user_avatar_shrink':'188_188',
+        'version_code': app_version,
+        'language': 'en',
+        'app_name': 'musical_ly',
+        'app_version': app_version,
+        'op_region': 'TW',
+        'residence': 'TW',
+        'device_id': device_id,
+        'channel': 'App Store',
+        'mcc_mnc': '',
+        'tz_offset': '28800',
+        'account_region': 'sg',
+        'sys_region': 'TW',
+        'aid': aid,
+        'locale': 'en',
+        'screen_width': '750',
+        'uoo': '1',
+        'openudid': '84d2027fd3628acd5507b2186811de22d31cd68c',
+        'cdid': 'CC536710-1298-4725-8540-C5105EFFD5F8',
+        'os_api': '18',
+        'ac': 'WIFI',
+        'os_version': '13.5.1',
+        'app_language': 'en',
+        'content_language': '',
+        'tz_name': 'Asia/Taipei',
+        'current_region': 'TW',
+        'device_platform': 'iphone',
+        'build_number': '253012',
+        'iid': '7128673685729396482',
+        'device_type': 'iPhone8,1',
+        'idfv': '00000000-0000-0000-0000-000000000000',
+        'idfa': '00000000-0000-0000-0000-000000000000',
     }
+    body = 'channel_id=0&from=18&from_pre=0&item_id='+item_id+'&sec_user_id='+sec_user_id+'&type=1&user_id='+user_id
 
+    x_ss_stub = md5(body.encode('utf-8')).hexdigest().upper()
     query_str = urlencode(query, safe='/,', quote_via=quote)
-
     query_md5_hex = md5(query_str.encode('utf-8')).hexdigest()
 
     x_khronos = int(time.time())
     x_ladon = XLadon.encrypt(x_khronos, lc_id)
     x_gorgon = XGorgon.build(query_md5_hex, None, sdk_ver, x_khronos)
     
-    argus = XArgus.get_argus()
-    argus[5] = device_id
-    argus[6] = lc_id
-    argus[13] = XArgus.get_bodyhash(None)
-    argus[14] = XArgus.get_queryhash(query_str)
-    argus[16] = 'A9EbgRR2qEaNO5OPtE48sPJbX'
-    x_argus = XArgus.encrypt(argus)
+    xargus_simple_bean = {
+        'deviceID': device_id,  #可为空
+        'licenseID': lc_id,
+        'appVersion': app_version,
+        'sdkVersionStr': sdk_ver_str,
+        'sdkVersion': sdk_ver,
+        'x_khronos': x_khronos,
+        'x_ss_stub': x_ss_stub, #get请求可为空
+        'secDeviceToken': "AnPPIveUCQlIiFroHGG17nXK6", #可为空
+        'queryHex': query_str.encode('utf-8').hex(),
+        'x_bd_lanusk': '', #/passport/user/login/ 返回头 关注、点赞必需
+    }
+    x_argus = XArgus.build(xargus_simple_bean)
 
     headers = {
-        'passport-sdk-version':'5.12.1',
-        'x-vc-bdturing-sdk-version':'2.2.0',
-        'user-agent':'TikTok 23.3.0 rv:233017 (iPhone; iOS 14.2; zh-Hant_VN) Cronet',
-        'sdk-version':'2',
-        'x-tt-dm-status':'login=1;ct=1;rt=6',
-        'x-tt-store-idc':'useast5',
-        'x-tt-store-region':'us',
-        'x-tt-store-region-src':'uid',
-        'x-ss-dp':'1233',
-        'accept-encoding':'gzip, deflate, br',
-        'x-argus':x_argus,
-        'x-gorgon':x_gorgon,
-        'x-khronos':str(x_khronos),
-        'x-ladon':x_ladon,
+        'x-tt-token': '01bd4c9642f7dcae9d0cbf7155034ae023042ecd45dbec587565ccc4c19ecc6bd05a3c99e05a88d9ba52474d45eab70f360d2d965cc1d4c073600868d687a9be22678ddf76e55f19c5cce23c03eb689ec97d696f1bf93525cdb2e1776ed4787450148-CkA3ZjNhZjBlZWQ3M2NkMWNjZWRiNzYyZjgzZDBiMjYwOWM0NDA1ZDMxOTgxOGRjMjhkOTdhNGM0ZDIxMzEwMjRm-2.0.0',
+        'x-tt-dm-status': 'login=1;ct=1;rt=1',
+        'x-vc-bdturing-sdk-version': '2.2.0',
+        'content-type': 'application/x-www-form-urlencoded',
+        'user-agent': 'TikTok 25.3.0 rv:253012 (iPhone; iOS 13.5.1; en_TW) Cronet',
+        'x-tt-cmpl-token': 'AgQQAPO8F-RPsLLVyLMePJ07-I-4zF1Zf4MMYMWxEw',
+        'sdk-version': '2',
+        'passport-sdk-version': '5.12.1',
+        'x-tt-store-idc': 'alisg',
+        'x-tt-store-region': 'sg',
+        'x-tt-store-region-src': 'uid',
+        'x-bd-kmsv': '0',
+        'x-ss-dp': '1233',
+        'x-tt-trace-id': '00-80a567071062ee21fff2c646018f04d1-80a567071062ee21-01',
+        'accept-encoding': 'gzip, deflate, br',
+        'cookie': 'passport_csrf_token=f8667b0a9ad62546d8f08ce257abc93b',
+        'cookie': 'passport_csrf_token_default=f8667b0a9ad62546d8f08ce257abc93b',
+        'cookie': 'tt_webid=4d6fa65da0302c5f8dc07e636ad3a12c',
+        'cookie': 'cmpl_token=AgQQAPO8F-RPsLLVyLMePJ07-I-4zF1Zf4M3YMWCxQ',
+        'cookie': 'd_ticket=78fc698a8f94c1dc91589a84d1135d422a8aa',
+        'cookie': 'multi_sids=7127832705102660610%3Abd4c9642f7dcae9d0cbf7155034ae023',
+        'cookie': 'install_id=7128673685729396482',
+        'cookie': 'ttreq=1$e8c9766828ea95b93ba3e2f26a4f3a5860dc1258',
+        'cookie': 'sessionid=bd4c9642f7dcae9d0cbf7155034ae023',
+        'cookie': 'sessionid_ss=bd4c9642f7dcae9d0cbf7155034ae023',
+        'cookie': 'sid_guard=bd4c9642f7dcae9d0cbf7155034ae023%7C1659945173%7C15552000%7CSat%2C+04-Feb-2023+07%3A52%3A53+GMT',
+        'cookie': 'sid_tt=bd4c9642f7dcae9d0cbf7155034ae023',
+        'cookie': 'uid_tt=4fb0f0d0674aad4b2a49f6f8f7aac7054923022c85da0363c269d06aaf4489bc',
+        'cookie': 'uid_tt_ss=4fb0f0d0674aad4b2a49f6f8f7aac7054923022c85da0363c269d06aaf4489bc',
+        'cookie': 'odin_tt=e0b6fbf208d9456f48fecd170d0867d535d97eb9c3e16e8eda3a42ce4cd2dafd1e43fd92cdee2ef7ad914505456d9e127816d71c6096f340719b42b2932c96e77f4201bb5b6c231531813269383ec304',
+        'cookie': 'store-idc=alisg',
+        'cookie': 'store-country-code=sg',
+        'cookie': 'tt-target-idc=alisg',
+        'cookie': 'msToken=MAcPZrb2Vq03dovlAJSeL8n6XGP3u0oTFdirdVWMOZHQSeUBu-bvtpg4-jw2zUAyujD4Op8ngCsSO8whjqjQgRTwQFrYmR8TTpApK-HVUeg=',
+        'x-ss-stub': x_ss_stub,
+        'x-argus': x_argus,
+        'x-gorgon': x_gorgon,
+        'x-khronos': x_khronos,
+        'x-ladon': x_ladon,
     }
     print('request.url:', path + '?' + query_str)
     print('request.headers:', headers)
@@ -373,22 +351,5 @@ def query_user_profile(user_id:str, sec_user_id:str):
     print(resp.status_code, resp.content)
 
 if __name__ == '__main__':
-    # query_user_profile(None, None)
-    
-    query = 'residence=SG&device_id=&os_version=13.3&multi_login=1&app_id=1233&app_name=musical_ly&vendor_id=03405D1E-A439-4010-955F-771ADA050D51&locale=en&ac=WIFI&sys_region=US&ssmix=a&version_code=25.1.1&vid=03405D1E-A439-4010-955F-771ADA050D51&channel=App%20Store&op_region=SG&os_api=18&idfa=2A58B330-DDE2-4FEB-9FAE-424A64F2D1F5&idfv=2A58B330-DDE2-4FEB-9FAE-424A64F2D1F5&device_platform=iphone&device_type=iPhone8,1&openudid=1d838bed9ea49e3492ed52fff0d0ede400bf31a7&tz_name=US/Eastern&tz_offset=-14400&app_language=en&current_region=SG&build_number=251102&aid=1233&mcc_mnc=&screen_width=750&language=en&cdid=78F6FCFB-5ED9-4E0C-9CE8-1736AFD71C99&app_version=25.1.1&resolution=750*1334&cronet_version=6586a3ac_2022-05-30&ttnet_version=4.1.94.7-tiktok'
-
-    xargus_simple_bean = {
-        'deviceID': "7111580899770353153",  #可为空
-        'licenseID': "466012054",
-        'appVersion': "25.1.1",
-        'sdkVersionStr': "v04.03.09-ov-iOS",
-        'sdkVersion': 0x04030921,
-        'x_khronos': 1658136692,
-        'x_ss_stub': "E1DD9F35B12090B8A6F1DAF0E54E4ACA", #get请求可为空
-        'secDeviceToken': "AnPPIveUCQlIiFroHGG17nXK6", #可为空
-        'queryHex': query.encode('utf-8').hex(),
-    }
-
-    ss = XArgus.build(xargus_simple_bean)
-    print(ss)
+    aweme_v1_commit_follow_user(None, None, None)
 

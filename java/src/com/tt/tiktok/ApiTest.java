@@ -123,6 +123,11 @@ public class ApiTest {
 	}
 
 	public static void main(String[] args) {
-		testTokenRequestDecrypt();
+		testXArgus();
+		
+//		String s = "08d2a480820410021898c4e7de0e2204313138302a1337303638343831323732383233373933313938320a313232353632353935323a0632332e332e3042107630342e30332e30382d6f762d694f5348c2a0984052080000000000000000580160cedceba10c6a06bd305224ec447206c51c9089a3327a0a083610bee15418bee154820119416e50504976655543516c496946726f48474731376e584b368801cedceba10ca201046e6f6e65a801e205";
+//		byte[] data = HexUtil.toBytes(s);
+//		TreeMap<Integer, Object> map = ProtoBuffers.toMap(new Buffer().write(data));
+//		System.out.println(map);
 	}
 }

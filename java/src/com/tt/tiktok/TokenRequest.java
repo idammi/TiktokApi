@@ -2,8 +2,6 @@ package com.tt.tiktok;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.Random;
 import java.util.TreeMap;
 
 import com.tt.http.HttpClientFactory;
@@ -11,20 +9,17 @@ import com.tt.tiktok.Api.XArgus;
 import com.tt.tiktok.Api.XGorgon;
 import com.tt.tiktok.Api.XLadon;
 import com.tt.tiktok.bean.TokenReqBean;
-import com.tt.tiktok.bean.XArgusBean;
-import com.tt.tiktok.bean.XArgusBean.ActionRecord;
+import com.tt.tiktok.bean.XArgusSimpleBean;
 import com.tt.util.GZipUtil;
 import com.tt.util.HexUtil;
 import com.tt.util.MDUtil;
 import com.tt.util.ProtoBuffers;
-import com.tt.util.SM3;
 
 import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okio.ByteString;
 
 public class TokenRequest {
 	
@@ -63,6 +58,7 @@ public class TokenRequest {
 				+ "mode=2";
 		
 		byte[] bodybytes = buildTokenReqBody();
+		System.out.println("bodybytes: "+HexUtil.toString(bodybytes));
 		
 		final String lc_id = "466012054";
 		final int sdkver = 0x4030921;
@@ -74,31 +70,10 @@ public class TokenRequest {
 		String x_ladon = XLadon.encrypt(x_khronos, lc_id);
 		String x_gorgon = XGorgon.build(query_md5_hex, x_ss_stub, sdkver, (int)x_khronos);
 		
-		XArgusBean xArgus = new XArgusBean();
-		xArgus.magic = 0x20200929 << 1; //固定值
-		xArgus.version = 2;
-		xArgus.rand = Math.abs(new Random().nextInt()); 
-		xArgus.msAppID = "1233";
-		xArgus.deviceID = "7074501187519448622";
-		xArgus.licenseID = lc_id;
-		xArgus.appVersion = "24.4.0";
-		xArgus.sdkVersionStr = "v04.03.09-ov-iOS";
-		xArgus.sdkVersion = sdkver << 1;
-		xArgus.envcode = ByteString.decodeHex("0000000000000000"); //越狱检测
-		xArgus.platform = 1;
-		xArgus.createTime = x_khronos << 1;
-		xArgus.bodyHash = ByteString.of(SM3.hash(HexUtil.toBytes(x_ss_stub)));
-		xArgus.queryHash = ByteString.of(SM3.hash(query.getBytes()));
-		xArgus.actionRecord = new ActionRecord();
-		xArgus.actionRecord.reportCount = 4;
-		xArgus.actionRecord.settingCount = 1388734;
-		xArgus.actionRecord.signCount = 492;
-		xArgus.secDeviceToken = "AJ3T-R05Bj1-8RF4XsdAX6HOk";
-		xArgus.isAppLicense = x_khronos << 1;
-		xArgus.pskVersion = "0";
-		xArgus.callType = 738; //固定值
+		XArgusSimpleBean xArgusBean = new XArgusSimpleBean();
+//		TODO 填充XArgusSimpleBean对象
 		
-		String xArgusStr = XArgus.encrypt(xArgus);
+		String xArgusStr = XArgus.build(xArgusBean);
 		
 		Headers.Builder headers = new Headers.Builder();
 		headers.add("x-tt-token", "04a0a5d6f5f98572df4678ca26d703f98b05967de3eed9786865a36ffba95019231a76f94fa4d7069f95cc572827588b55210c2b57c37ecafb92d2eb999248aae9c2b194c827304a3f1344618ebfeb99b617b46debe21b43ee7e48a98d873c921011c-1.0.1");

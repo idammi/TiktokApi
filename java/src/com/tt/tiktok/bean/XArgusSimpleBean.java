@@ -10,4 +10,5 @@ public class XArgusSimpleBean {
 	public String x_ss_stub; //可为空
 	public String secDeviceToken; //可为空
 	public String queryHex;
+	public String x_bd_lanusk; // /passport/user/login/ 返回头 关注、点赞必需
 }

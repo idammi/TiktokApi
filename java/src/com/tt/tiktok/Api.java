@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import com.alibaba.fastjson.JSON;
 import com.tt.http.Https;
 import com.tt.tiktok.bean.XArgusBean;
+import com.tt.tiktok.bean.XArgusSimpleBean;
 import com.tt.util.Bytes;
 import com.tt.util.HexUtil;
 import com.tt.util.MDUtil;
@@ -13,7 +14,6 @@ import com.tt.util.ProtoBuffers;
 import com.tt.util.Utils;
 
 import okio.Buffer;
-import test.dh.model.XArgusSimpleBean;
 
 public class Api {
 	public static String url = "http://47.98.221.30:666/aweme_service/result";
