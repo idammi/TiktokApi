@@ -228,14 +228,14 @@ def testTokenRequestDecrypt():
     filedata = read_file('~/Desktop/get_token.req')
     endata = ProtoBuf(filedata).getBytes(4)
     dedata = TokenReqCryptor.decrypt(endata.hex())
-    ProtoBuf(dedata).dump()
+    ProtoBuf(bytes.fromhex(dedata)).dump()
 
 def testTokenResponseDecrypt():
     #读取/sdi/get_token返回内容
     filedata = read_file('~/Desktop/get_token.resp')
     endata = ProtoBuf(filedata).getBytes(6)
     dedata = TokenReqCryptor.decrypt(endata.hex())
-    ProtoBuf(dedata).dump()
+    ProtoBuf(bytes.fromhex(dedata)).dump()
 
 def aweme_v1_commit_follow_user(user_id:str, sec_user_id:str, item_id:str):
     lc_id = '466012054'
