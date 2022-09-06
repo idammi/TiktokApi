@@ -106,12 +106,15 @@ class XArgus:
         return Api.send('XArgus_build', [
             json.dumps(xargus_simple_bean).encode('utf-8').hex()
         ])
+    
+    @staticmethod
+    def decrypt(xargus:str) -> ProtoBuf:
+        resp = Api.send('XArgus_decrypt', [ xargus ])
+        return ProtoBuf(bytes.fromhex(resp))
 
     @staticmethod
-    def decrypt(xargus:str) -> dict:
-        resp = Api.send('XArgus_decrypt', [ xargus ])
-        pb = ProtoBuf(bytes.fromhex(resp))
-        return pb.toDict(XArgus.get_argus())
+    def encrypt(xargus:ProtoBuf) -> str:
+        return Api.send('XArgus_encrypt', [ xargus.toBuf().hex() ])
 
 class TokenReqCryptor:
     def encrypt(hex:str) -> str:
